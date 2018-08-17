@@ -1,0 +1,7 @@
+*~
+*.sw[a-z]
+*.tmp
+*.zip
+dist/
+vendor/
+.vscode/
