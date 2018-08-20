@@ -5,12 +5,52 @@ resource "aws_sfn_state_machine" "roller" {
   definition = <<EOF
 {
     "Comment": "Rollerbot - ${var.autoscaling_group_name}",
-    "StartAt": "CountOutdatedInstances",
+    "StartAt": "CountRunningExecutions",
     "States": {
+        "CountRunningExecutions": {
+            "Type": "Task",
+            "Resource": "${aws_lambda_function.count_running_executions.arn}",
+            "Next": "HaltIfRunningExecutions"
+        },
+        "HaltIfRunningExecutions": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$.RunningExecutionCount",
+                    "NumericGreaterThan": 1,
+                    "Next": "Done"
+                }
+            ],
+            "Default": "CountOutdatedInstances"
+        },
         "CountOutdatedInstances": {
             "Type": "Task",
-            "Resource": "",
-            "End": true
+            "Resource": "${aws_lambda_function.count_outdated_instances.arn}",
+            "Next": "HaltIfNoneOutdated" 
+        },
+        "HaltIfNoneOutdated": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$.OutdatedInstanceCount",
+                     "NumericEquals": 0,
+                    "Next": "Done"
+                }
+            ],
+            "Default": "IncreaseDesiredCapacity"
+        },
+        "IncreaseDesiredCapacity": {
+            "Type": "Task",
+            "Resource": "${aws_lambda_function.adjust_desired_instance_count.arn}",
+            "Next": "WaitAndCountAgain"
+        },
+        "WaitAndCountAgain": {
+            "Type": "Wait",
+            "Seconds": ${var.wait_interval},
+            "Next": "CountOutdatedInstances"
+        },
+        "Done": {
+            "Type": "Succeed"
         }
     }
 }
@@ -22,7 +62,7 @@ data "aws_iam_policy_document" "roller_assume_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "AWS"
+      type        = "Service"
       identifiers = ["states.amazonaws.com"]
     }
   }
@@ -30,13 +70,18 @@ data "aws_iam_policy_document" "roller_assume_role" {
 
 data "aws_iam_policy_document" "roller_policy" {
   statement {
-    actions   = []
-    resources = []
+    actions = ["lambda:InvokeFunction"]
+
+    resources = [
+      "${aws_lambda_function.count_running_executions.arn}",
+      "${aws_lambda_function.count_outdated_instances.arn}",
+      "${aws_lambda_function.adjust_desired_instance_count.arn}",
+    ]
   }
 }
 
 resource "aws_iam_role" "roller" {
-  name               = "rollerbot-roller-${var.autoscaling_group_name}"
+  name               = "${format("%.64s", "rollerbot-roller-${var.autoscaling_group_name}")}"
   assume_role_policy = "${data.aws_iam_policy_document.roller_assume_role.json}"
 }
 

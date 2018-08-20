@@ -1,7 +1,10 @@
 *~
+*.backup
+*.tfstate
 *.sw[a-z]
 *.tmp
 *.zip
 dist/
 vendor/
+.terraform/
 .vscode/

@@ -1,16 +1,17 @@
 resource "aws_lambda_function" "start_roller" {
-  function_name = "rollerbot-start-roller-${var.autoscaling_group_name}"
+  function_name = "${format("%.64s", "rollerbot-start-roller-${var.autoscaling_group_name}")}"
   description   = "Start instance roller for ${var.autoscaling_group_name} Auto Scaling Group"
-  role          = "${aws_iam_role.start_roller.name}"
+  role          = "${aws_iam_role.start_roller.arn}"
 
   s3_bucket = "${var.s3_bucket}"
-  s3_key    = "${var.lambda_version}/start-roller.zip"
+  s3_key    = "v${var.lambda_version}/start-roller.zip"
   handler   = "start-roller"
+  runtime   = "go1.x"
 
   environment {
     variables = {
       AUTOSCALING_GROUP_NAME = "${var.autoscaling_group_name}"
-      STEP_FUNCTION_ARN      = "${aws_sfn_state_machine.roller.id}"
+      STATE_MACHINE_ARN      = "${aws_sfn_state_machine.roller.id}"
       STEP_SIZE              = "${var.step_size}"
       STEP_PERCENT           = "${var.step_percent}"
     }
@@ -22,7 +23,7 @@ data "aws_iam_policy_document" "start_roller_assume_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "AWS"
+      type        = "Service"
       identifiers = ["lambda.amazonaws.com"]
     }
   }
@@ -30,13 +31,28 @@ data "aws_iam_policy_document" "start_roller_assume_role" {
 
 data "aws_iam_policy_document" "start_roller_policy" {
   statement {
-    actions   = ["sfn:StartExecution"]
-    resources = ["${aws_sfn_state_machine.roller.arn}"]
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    actions   = ["autoscaling:DescribeAutoScalingGroups"]
+    resources = ["*"]
+  }
+
+  statement {
+    actions   = ["states:StartExecution"]
+    resources = ["${aws_sfn_state_machine.roller.id}"]
   }
 }
 
 resource "aws_iam_role" "start_roller" {
-  name               = "rollerbot-start-roller-${var.autoscaling_group_name}"
+  name               = "${format("%.64s", "rollerbot-start-roller-${var.autoscaling_group_name}")}"
   assume_role_policy = "${data.aws_iam_policy_document.start_roller_assume_role.json}"
 }
 

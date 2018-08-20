@@ -1,14 +1,19 @@
 resource "aws_cloudwatch_event_rule" "update_group" {
-  name        = "rollerbot-update_group-${var.autoscaling_group_name}"
+  name        = "${format("%.64s", "rollerbot-update_group-${var.autoscaling_group_name}")}"
   description = "Invoked when UpdateAutoScalingGroup is called on ${var.autoscaling_group_name}"
+
+  #    "detail-type": [ "AWS API Call via CloudTrail" ],
 
   event_pattern = <<PATTERN
 {
     "detail-type": [ "AWS API Call via CloudTrail" ],
     "detail": {
         "eventSource": [ "autoscaling.amazonaws.com" ],
-        "eventName": [ "UpdateAutoScalingGroup "]
-    }
+        "eventName": [ "UpdateAutoScalingGroup" ],
+        "requestParameters": {
+            "autoScalingGroupName": [ "${var.autoscaling_group_name}" ]
+        }
+   }
 }
 PATTERN
 }
