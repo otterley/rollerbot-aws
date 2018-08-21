@@ -45,7 +45,12 @@ jobs:
             dep ensure
       - run:
           name: Run tests
-          command: make test_grow_method
+          command: |
+            if ! make test_grow_method; then
+              cd test/grow-method
+              terraform destroy -var lambda_version=0.0.0 -auto-approve
+              false
+            fi
 
 workflows:
   version: 2
