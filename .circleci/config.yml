@@ -10,8 +10,8 @@ jobs:
       - run:
           name: Prepare workspace
           command: |
-            apt-get update && apt-get -y install python2-pip
-            pip install awscli >/dev/null
+            sudo apt-get update && sudo apt-get -y install python-pip
+            sudo pip install awscli >/dev/null
             curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
       - run:
@@ -39,7 +39,7 @@ jobs:
           name: Prepare workspace
           command: |
             curl -sSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
-            unzip -q -d /usr/bin /tmp/terraform.zip && chmod +x /usr/bin/terraform
+            sudo unzip -q -d /usr/bin /tmp/terraform.zip && sudo chmod +x /usr/bin/terraform
             dep ensure
       - run:
           name: Run tests

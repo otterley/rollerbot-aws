@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/otterley/rollerbot-aws/tree/master.svg?style=svg)](https://circleci.com/gh/otterley/rollerbot-aws/tree/master)
+
 # RollerBot
 
 ## Purpose
