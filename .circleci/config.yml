@@ -10,7 +10,8 @@ jobs:
       - run:
           name: Prepare workspace
           command: |
-            apk add zip unzip curl git make >/dev/null
+            apk add py2-pip zip unzip curl git make >/dev/null
+            pip install awscli >/dev/null
             curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
       - run:
