@@ -22,5 +22,5 @@ upload: zip
 .PHONY: upload
 
 test_grow_method:
-	go test -v -timeout 30m ./test/grow-method
+	LAMBDA_VERSION=$(VERSION) go test -v -timeout 30m ./test/grow-method
 .PHONY: test_grow_method

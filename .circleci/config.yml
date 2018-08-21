@@ -8,7 +8,7 @@ jobs:
     steps:
       - checkout
       - run: |
-          apk add unzip curl git >/dev/null
+          apk add unzip curl git make >/dev/null
           curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
           curl -sSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
           unzip -q -d /usr/local /tmp/terraform.zip
