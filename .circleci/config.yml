@@ -10,6 +10,7 @@ jobs:
       - run:
           name: Prepare workspace
           command: |
+            git fetch --tags
             sudo apt-get update && sudo apt-get -y install python-pip
             sudo pip install awscli >/dev/null
             curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
@@ -29,7 +30,7 @@ jobs:
 
   test_grow_method:
     docker:
-      - image: golang:1.10.3-alpine3.8
+      - image: circleci/golang:1.10.3-stretch
     working_directory: /go/src/github.com/otterley/rollerbot-aws
     steps:
       - checkout
@@ -38,6 +39,7 @@ jobs:
       - run:
           name: Prepare workspace
           command: |
+            git fetch --tags
             curl -sSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
             sudo unzip -q -d /usr/bin /tmp/terraform.zip && sudo chmod +x /usr/bin/terraform
             dep ensure
