@@ -1,26 +1,63 @@
 version: 2
 
 jobs:
+  build_and_upload:
+    docker:
+      - image: golang:1.10.3-alpine3.8
+    working_directory: /go/src/github.com/otterley/rollerbot-aws
+    steps:
+      - checkout
+      - run:
+          name: Prepare workspace
+          command: |
+            apk add unzip curl git make >/dev/null
+            curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+      - run:
+          name: Compile and build ZIP files
+          command: make zip
+      - run:
+          name: Upload to S3
+          command: make upload
+      - save_cache:
+          key: gopkg-v1-{{ checksum "Gopkg.lock" }}
+          paths:
+            - vendor
+
+
   test_grow_method:
     docker:
       - image: golang:1.10.3-alpine3.8
     working_directory: /go/src/github.com/otterley/rollerbot-aws
     steps:
       - checkout
-      - run: |
-          apk add unzip curl git make >/dev/null
-          curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-          curl -sSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
-          unzip -q -d /usr/bin /tmp/terraform.zip && chmod +x /usr/bin/terraform
-          dep ensure
-          make test_grow_method
+      - restore_cache:
+          key: gopkg-v1-{{ checksum "Gopkg.lock" }}
+      - run:
+          name: Prepare workspace
+          command: |
+            apk add unzip curl git make >/dev/null
+            curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            curl -sSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
+            unzip -q -d /usr/bin /tmp/terraform.zip && chmod +x /usr/bin/terraform
+            dep ensure
+      - run:
+          name: Run tests
+          command: make test_grow_method
 
 workflows:
   version: 2
-  test_grow_method:
+  build_test:
     jobs:
+      - build_and_upload:
+          context: AWS
+          filters:
+            branches:
+              only: master
       - test_grow_method:
           context: AWS
+          requires: 
+            - build_and_upload
           filters:
             branches:
               only: master
