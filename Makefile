@@ -19,5 +19,8 @@ dist:
 
 upload: zip
 	aws s3 sync dist/ s3://$(S3BUCKET)/$(VERSION)/
-
 .PHONY: upload
+
+test_grow_method:
+	go test -v -timeout 30m ./test/grow-method
+.PHONY: test_grow_method
