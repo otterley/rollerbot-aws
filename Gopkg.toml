@@ -25,22 +25,6 @@
 #   unused-packages = true
 
 
-[[constraint]]
-  name = "github.com/aws/aws-lambda-go"
-  version = "1.4.0"
-
 [prune]
   go-tests = true
   unused-packages = true
-
-[[constraint]]
-  name = "github.com/gruntwork-io/terratest"
-  version = "0.9.16"
-
-[[constraint]]
-  name = "github.com/stretchr/testify"
-  version = "1.2.2"
-
-[[constraint]]
-  name = "github.com/aws/aws-sdk-go"
-  version = "1.15.15"

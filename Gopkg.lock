@@ -10,11 +10,11 @@
     "lambdacontext",
   ]
   pruneopts = "UT"
-  revision = "e630af386f8aad6ec9fc899b951cf62d37cfe56f"
-  version = "v1.4.0"
+  revision = "2d482ef09017ae953b1e8d5a6ddac5b696663a3c"
+  version = "v1.6.0"
 
 [[projects]]
-  digest = "1:dddad6fff39a4dd668c53f649a5d8c16f65d98adf93517267dcd53b3a2e0c2ec"
+  digest = "1:a918fbb2204dd61b4bd2fd46d92a169e9c24a1996d716fe8fa375646af8cb2ce"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -51,8 +51,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "ca229c7730be9278527fbb287f5a26c91e328d86"
-  version = "v1.15.15"
+  revision = "66974140c322f22c1daaf95a18930ea6a9e4d21e"
+  version = "v1.15.16"
 
 [[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
@@ -81,8 +81,8 @@
     "modules/terraform",
   ]
   pruneopts = "UT"
-  revision = "655f427efa8bfbb3f40259f5ae305dfd744e4f7b"
-  version = "v0.9.16"
+  revision = "8bcb4e1ad409e19aac4ad7fab99fe632326a1884"
+  version = "v0.9.17"
 
 [[projects]]
   digest = "1:e22af8c7518e1eab6f2eab2b7d7558927f816262586cd6ed9f349c97a6c285c4"
@@ -121,7 +121,7 @@
   name = "golang.org/x/net"
   packages = ["context"]
   pruneopts = "UT"
-  revision = "aaf60122140d3fcf75376d319f0554393160eb50"
+  revision = "922f4815f713f213882e8ef45e0d315b164d705c"
 
 [solve-meta]
   analyzer-name = "dep"
