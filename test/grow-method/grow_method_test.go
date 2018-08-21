@@ -151,6 +151,7 @@ func testAllInstancesHaveLaunchConfig(ctx context.Context, autoScalingGroupName,
 			if nonMatching == 0 {
 				return
 			}
+			fmt.Printf("%d instances still running with old Launch Configuration\n", nonMatching)
 			select {
 			case <-ctx.Done():
 				// timed out
