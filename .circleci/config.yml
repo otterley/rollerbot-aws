@@ -4,10 +4,11 @@ jobs:
   test_grow_method:
     docker:
       - image: golang:1.10.3-alpine3.8
+    working_directory: /go/src/github.com/otterley/rollerbot-aws
     steps:
       - checkout
       - run: |
-          apk add unzip curl
+          apk add unzip curl git
           curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
           curl -sSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
           unzip -q -d /usr/local /tmp/terraform.zip
@@ -15,6 +16,9 @@ jobs:
 
 workflows:
   version: 2
-  test:
+  test_grow_method:
     jobs:
-      - test_grow_method
+      - test_grow_method:
+          filters:
+            branches:
+              only: master
