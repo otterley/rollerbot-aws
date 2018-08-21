@@ -1,4 +1,5 @@
 version: 2
+
 jobs:
   test_grow_method:
     docker:
@@ -11,3 +12,9 @@ jobs:
           curl -sSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
           unzip -q -d /usr/local /tmp/terraform.zip
           dep ensure
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test_grow_method
