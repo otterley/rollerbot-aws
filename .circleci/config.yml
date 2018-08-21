@@ -10,7 +10,7 @@ jobs:
       - run:
           name: Prepare workspace
           command: |
-            apk add unzip curl git make >/dev/null
+            apk add zip unzip curl git make >/dev/null
             curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
       - run:
@@ -22,6 +22,7 @@ jobs:
       - save_cache:
           key: gopkg-v1-{{ checksum "Gopkg.lock" }}
           paths:
+            - /go/bin/dep
             - vendor
 
 
@@ -37,7 +38,6 @@ jobs:
           name: Prepare workspace
           command: |
             apk add unzip curl git make >/dev/null
-            curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             curl -sSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
             unzip -q -d /usr/bin /tmp/terraform.zip && chmod +x /usr/bin/terraform
             dep ensure
