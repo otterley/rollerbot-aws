@@ -18,7 +18,7 @@ dist:
 	mkdir dist
 
 upload: zip
-	aws s3 sync dist/ s3://$(S3BUCKET)/$(VERSION)/
+	aws s3 sync dist/ s3://$(S3BUCKET)/v$(VERSION)/
 .PHONY: upload
 
 test_grow_method:

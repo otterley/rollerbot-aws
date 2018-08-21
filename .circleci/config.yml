@@ -3,14 +3,13 @@ version: 2
 jobs:
   build_and_upload:
     docker:
-      - image: golang:1.10.3-alpine3.8
+      - image: circleci/golang:1.10.3-stretch
     working_directory: /go/src/github.com/otterley/rollerbot-aws
     steps:
       - checkout
       - run:
           name: Prepare workspace
           command: |
-            apk add py2-pip zip unzip curl git make >/dev/null
             pip install awscli >/dev/null
             curl -sS https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
@@ -38,7 +37,6 @@ jobs:
       - run:
           name: Prepare workspace
           command: |
-            apk add unzip curl git make >/dev/null
             curl -sSL -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
             unzip -q -d /usr/bin /tmp/terraform.zip && chmod +x /usr/bin/terraform
             dep ensure
